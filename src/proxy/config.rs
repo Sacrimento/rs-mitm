@@ -1,7 +1,9 @@
 use config::{Config as _Config, ConfigError, File};
+use log::info;
 use serde::Deserialize;
 use std::env;
 use std::net::IpAddr;
+use std::path::Path;
 
 #[derive(Debug, Deserialize)]
 pub struct ProxyConfig {
@@ -43,6 +45,11 @@ impl Config {
         let conf = _Config::builder()
             .add_source(File::with_name(&path))
             .build()?;
+
+        info!(
+            "Configuration read from \"{}\"",
+            Path::new(&path).canonicalize().unwrap().display()
+        );
 
         conf.try_deserialize()
     }

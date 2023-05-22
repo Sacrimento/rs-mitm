@@ -1,4 +1,5 @@
-use hyper::Request;
+use hyper::{Request, Response};
+use log::info;
 use tower::{Layer, Service};
 
 #[derive(Clone, Copy)]
@@ -28,7 +29,7 @@ where
     }
 
     fn call(&mut self, req: Request<B>) -> Self::Future {
-        println!("{} {}", req.method(), req.uri());
+        info!("{:?} {} {}", req.version(), req.method(), req.uri());
         self.inner.call(req)
     }
 }
