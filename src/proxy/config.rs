@@ -1,17 +1,17 @@
-use config::{Config, ConfigError, File};
+use config::{Config as _Config, ConfigError, File};
 use serde::Deserialize;
 use std::env;
 use std::net::IpAddr;
 
 #[derive(Debug, Deserialize)]
-pub struct ProxySettings {
-    #[serde(default = "ProxySettings::default_host")]
+pub struct ProxyConfig {
+    #[serde(default = "ProxyConfig::default_host")]
     pub host: IpAddr,
-    #[serde(default = "ProxySettings::default_port")]
+    #[serde(default = "ProxyConfig::default_port")]
     pub port: u16,
 }
 
-impl ProxySettings {
+impl ProxyConfig {
     fn default_host() -> IpAddr {
         "127.0.0.1".parse().unwrap()
     }
@@ -21,26 +21,26 @@ impl ProxySettings {
     }
 }
 
-impl Default for ProxySettings {
+impl Default for ProxyConfig {
     fn default() -> Self {
-        ProxySettings {
-            host: ProxySettings::default_host(),
-            port: ProxySettings::default_port(),
+        ProxyConfig {
+            host: ProxyConfig::default_host(),
+            port: ProxyConfig::default_port(),
         }
     }
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Settings {
+pub struct Config {
     #[serde(default)]
-    pub proxy: ProxySettings,
+    pub proxy: ProxyConfig,
 }
 
-impl Settings {
+impl Config {
     pub fn new() -> Result<Self, ConfigError> {
         let path = env::var("RS_MITM_CONFIG").unwrap_or_else(|_| "config.json".into());
 
-        let conf = Config::builder()
+        let conf = _Config::builder()
             .add_source(File::with_name(&path))
             .build()?;
 

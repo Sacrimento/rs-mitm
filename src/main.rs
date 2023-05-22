@@ -6,7 +6,7 @@ use std::{convert::Infallible, net::SocketAddr};
 use tower::ServiceBuilder;
 
 pub mod proxy;
-use proxy::config::Settings;
+use proxy::config::Config;
 use proxy::log_layer::LoggerLayer;
 
 async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
@@ -15,7 +15,7 @@ async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
 
 #[tokio::main]
 async fn main() -> Result<(), hyper::Error> {
-    let config = Settings::new().expect("Invalid config");
+    let config = Config::new().expect("Invalid config");
 
     let make_service = make_service_fn(|_| async {
         Ok::<_, Infallible>(
