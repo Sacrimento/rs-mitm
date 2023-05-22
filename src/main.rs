@@ -1,6 +1,6 @@
-use std::{net::SocketAddr};
+use hyper::{service::service_fn, Body, Client, Request, Response, Server};
+use std::net::SocketAddr;
 use tower::make::Shared;
-use hyper::{service::{service_fn}, Server, Request, Body, Response, Client};
 
 pub mod proxy;
 use proxy::config::Settings;

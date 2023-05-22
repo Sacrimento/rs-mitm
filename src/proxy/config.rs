@@ -1,6 +1,6 @@
-use std::env;
 use config::{Config, ConfigError, File};
 use serde::Deserialize;
+use std::env;
 use std::net::IpAddr;
 
 #[derive(Debug, Deserialize)]
@@ -12,8 +12,12 @@ pub struct ProxySettings {
 }
 
 impl ProxySettings {
-    fn default_host() -> String { "127.0.0.1".into() }
-    fn default_port() -> u16 { 8080 }
+    fn default_host() -> String {
+        "127.0.0.1".into()
+    }
+    fn default_port() -> u16 {
+        8080
+    }
 
     pub fn host_as_ip(&self) -> IpAddr {
         // TODO: Check that the host is a *valid* IP
