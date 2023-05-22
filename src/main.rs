@@ -1,27 +1,33 @@
-use hyper::{service::service_fn, Body, Client, Request, Response, Server};
-use std::net::SocketAddr;
-use tower::make::Shared;
+use hyper::{
+    service::{make_service_fn, service_fn},
+    Body, Client, Request, Response, Server,
+};
+use std::{convert::Infallible, net::SocketAddr};
+use tower::ServiceBuilder;
 
 pub mod proxy;
 use proxy::config::Settings;
+use proxy::log_layer::LoggerLayer;
 
 async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
-    println!("{:?}", req);
-    let client = Client::new();
-    client.request(req).await
+    Client::new().request(req).await
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), hyper::Error> {
     let config = Settings::new().expect("Invalid config");
-    println!("{:#?}", config);
 
-    let make_service = Shared::new(service_fn(handle));
+    let make_service = make_service_fn(|_| async {
+        Ok::<_, Infallible>(
+            ServiceBuilder::new()
+                .layer(LoggerLayer::new())
+                .service(service_fn(handle)),
+        )
+    });
 
     let addr = SocketAddr::from((config.proxy.host, config.proxy.port));
-    let server = Server::bind(&addr).serve(make_service);
 
-    if let Err(e) = server.await {
-        panic!("Error initializing the HTTP server: {}", e);
-    }
+    Server::bind(&addr).serve(make_service).await?;
+
+    Ok(())
 }
