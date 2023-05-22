@@ -6,22 +6,18 @@ use std::net::IpAddr;
 #[derive(Debug, Deserialize)]
 pub struct ProxySettings {
     #[serde(default = "ProxySettings::default_host")]
-    pub host: String,
+    pub host: IpAddr,
     #[serde(default = "ProxySettings::default_port")]
     pub port: u16,
 }
 
 impl ProxySettings {
-    fn default_host() -> String {
-        "127.0.0.1".into()
-    }
-    fn default_port() -> u16 {
-        8080
+    fn default_host() -> IpAddr {
+        "127.0.0.1".parse().unwrap()
     }
 
-    pub fn host_as_ip(&self) -> IpAddr {
-        // TODO: Check that the host is a *valid* IP
-        self.host.parse().unwrap()
+    fn default_port() -> u16 {
+        8080
     }
 }
 

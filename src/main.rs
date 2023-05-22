@@ -18,7 +18,7 @@ async fn main() {
 
     let make_service = Shared::new(service_fn(handle));
 
-    let addr = SocketAddr::from((config.proxy.host_as_ip(), config.proxy.port));
+    let addr = SocketAddr::from((config.proxy.host, config.proxy.port));
     let server = Server::bind(&addr).serve(make_service);
 
     if let Err(e) = server.await {
