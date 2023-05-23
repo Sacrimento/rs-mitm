@@ -1,4 +1,3 @@
-use env_logger;
 use env_logger::Env;
 use hyper::{
     service::{make_service_fn, service_fn},
@@ -10,7 +9,7 @@ use tower::ServiceBuilder;
 
 pub mod proxy;
 use proxy::config::Config;
-use proxy::log_layer::LoggerLayer;
+use proxy::services::logging::layer::LoggerLayer;
 
 async fn handle(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     Client::new().request(req).await
