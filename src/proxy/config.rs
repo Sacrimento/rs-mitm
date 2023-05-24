@@ -3,7 +3,7 @@ use log::info;
 use serde::Deserialize;
 use std::env;
 use std::net::IpAddr;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Deserialize)]
 pub struct ProxyConfig {
@@ -11,6 +11,8 @@ pub struct ProxyConfig {
     pub host: IpAddr,
     #[serde(default = "ProxyConfig::default_port")]
     pub port: u16,
+    #[serde(default = "ProxyConfig::default_dump_dir")]
+    pub dump_dir: PathBuf,
 }
 
 impl ProxyConfig {
@@ -21,6 +23,10 @@ impl ProxyConfig {
     fn default_port() -> u16 {
         8080
     }
+
+    fn default_dump_dir() -> PathBuf {
+        env::temp_dir().to_owned()
+    }
 }
 
 impl Default for ProxyConfig {
@@ -28,6 +34,7 @@ impl Default for ProxyConfig {
         ProxyConfig {
             host: ProxyConfig::default_host(),
             port: ProxyConfig::default_port(),
+            dump_dir: ProxyConfig::default_dump_dir(),
         }
     }
 }
